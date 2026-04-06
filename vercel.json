@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "name": "canadarebates-landing",
+  "public": true,
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  },
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
