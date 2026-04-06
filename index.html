@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canada Rebates — Find Rebates in Your City</title>
+  <meta name="description" content="Discover available government rebates in your Canadian city. Get matched with verified contractors who help you claim them.">
+  <meta name="theme-color" content="#0a0f0a">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍁</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: { 50: '#e8f5e9', 100: '#c8e6c9', 200: '#a5d6a7', 300: '#81c784', 400: '#66bb6a', 500: '#4caf50', 600: '#43a047', 700: '#388e3c', 800: '#2e7d32', 900: '#1b5e20' },
+            bark: { 50: '#f1f8e9', 100: '#dcedc8', 200: '#c5e1a5', 300: '#aed581', 400: '#9ccc65', 500: '#8bc34a', 600: '#7cb342', 700: '#689f38', 800: '#558b2f', 900: '#33691e' },
+            pine: { DEFAULT: '#0d1f12', elevated: '#122118', card: '#1a2b1f', border: '#243526' },
+            mint: { DEFAULT: '#6ee7a0', muted: '#4dbd7d', dim: '#2d8a52', pale: '#a8f0c8' }
+          },
+          fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: radial-gradient(ellipse at 60% 0%, #0d1f12 0%, #0a0f0a 60%); font-family: 'Manrope', sans-serif; }
+    .glass-card { background: rgba(18, 33, 24, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(110, 231, 160, 0.1); }
+    .green-glow { box-shadow: 0 0 40px rgba(110, 231, 160, 0.12), 0 0 80px rgba(110, 231, 160, 0.06); }
+    .cta-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); transition: all 0.3s ease; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4); }
+    .cta-btn:active { transform: translateY(0); }
+    .cta-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .city-input { background: rgba(18, 33, 24, 0.8); border: 1px solid rgba(110, 231, 160, 0.2); transition: all 0.3s ease; }
+    .city-input:focus { border-color: #6ee7a0; box-shadow: 0 0 20px rgba(110, 231, 160, 0.15); outline: none; }
+    .province-select { background: rgba(18, 33, 24, 0.8); border: 1px solid rgba(110, 231, 160, 0.2); cursor: pointer; }
+    .province-select:focus { border-color: #6ee7a0; outline: none; }
+    .rebate-card { background: rgba(18, 33, 24, 0.7); border: 1px solid rgba(110, 231, 160, 0.1); transition: all 0.3s ease; }
+    .rebate-card:hover { border-color: rgba(110, 231, 160, 0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .contractor-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(110, 231, 160, 0.2); border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen text-mint overflow-x-hidden">
+  <!-- Ambient blobs -->
+  <div class="blob w-[600px] h-[600px] bg-[#1b5e20]/20 -top-40 -right-40"></div>
+  <div class="blob w-[400px] h-[400px] bg-[#2e7d32]/15 bottom-0 left-0"></div>
+
+  <div class="relative z-10">
+    <!-- Header -->
+    <header class="p-6 flex items-center justify-between max-w-6xl mx-auto">
+      <div class="flex items-center gap-3">
+        <div class="text-2xl">🍁</div>
+        <div>
+          <div class="text-sm font-bold text-mint">CanadaRebates</div>
+          <div class="text-xs text-mint/50">Find rebates in your city</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-mint/50">
+        <span class="w-2 h-2 rounded-full bg-[#6ee7a0] pulse-dot"></span>
+        <span id="live-count">3,500+ verified contractors</span>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="px-6 pt-8 pb-16 max-w-6xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-xs text-mint/70 mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#6ee7a0]"></span>
+        Live rebate data for Ontario, Manitoba, BC &amp; Quebec
+      </div>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
+        Don't leave money<br>
+        <span class="bg-gradient-to-r from-[#6ee7a0] to-[#4caf50] bg-clip-text text-transparent">on the table.</span>
+      </h1>
+      <p class="text-lg text-mint/60 max-w-xl mx-auto mb-10">
+        Canada has billions in unclaimed renovation rebates. Most homeowners never find out they qualify. We fix that — city by city.
+      </p>
+
+      <!-- Search form -->
+      <div class="glass-card rounded-3xl p-8 max-w-xl mx-auto green-glow">
+        <form id="search-form" class="space-y-4">
+          <div>
+            <input
+              type="text"
+              id="city-input"
+              placeholder="Enter your city (e.g. Toronto, Winnipeg, Vancouver)"
+              class="city-input w-full px-5 py-4 rounded-2xl text-mint placeholder-mint/30 text-sm"
+              autocomplete="off"
+              required
+            >
+          </div>
+          <div>
+            <select id="province-select" class="province-select w-full px-5 py-4 rounded-2xl text-mint text-sm" required>
+              <option value="" disabled selected>Select your province</option>
+              <option value="ON">Ontario</option>
+              <option value="MB">Manitoba</option>
+              <option value="BC">British Columbia</option>
+              <option value="QC">Quebec</option>
+              <option value="NL">Newfoundland & Labrador</option>
+              <option value="AB">Alberta</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="NB">New Brunswick</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="PE">Prince Edward Island</option>
+            </select>
+          </div>
+          <button type="submit" id="search-btn" class="cta-btn w-full py-4 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2">
+            <span>Find rebates in my city</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </button>
+        </form>
+        <p class="text-xs text-mint/30 mt-4">Free to search · No sign-up required · Results in seconds</p>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="px-6 py-16 max-w-6xl mx-auto">
+      <h2 class="text-2xl font-bold text-white text-center mb-12">How it works</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-4">🔍</div>
+          <h3 class="font-semibold text-white mb-2">Search by city</h3>
+          <p class="text-sm text-mint/50">Tell us your city and province. We scan our database of 3,500+ verified contractors.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-4">💰</div>
+          <h3 class="font-semibold text-white mb-2">See available rebates</h3>
+          <p class="text-sm text-mint/50">Get a personalized list of rebates you likely qualify for based on your location.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-4">🤝</div>
+          <h3 class="font-semibold text-white mb-2">Get matched</h3>
+          <p class="text-sm text-mint/50">We match you with verified, Gold Shield contractors in your area ready to help you claim.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results section (hidden initially) -->
+    <section id="results-section" class="px-6 py-8 max-w-6xl mx-auto hidden">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-xl font-bold text-white" id="results-heading">Results for Toronto, ON</h2>
+          <p class="text-sm text-mint/50 mt-1" id="results-subheading">Matched contractors near you</p>
+        </div>
+        <button onclick="newSearch()" class="text-sm text-mint/50 hover:text-mint transition-colors flex items-center gap-1">
+          ← New search
+        </button>
+      </div>
+
+      <!-- Rebates summary cards -->
+      <div id="rebates-summary" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
+
+      <!-- Contractor cards -->
+      <div id="contractors-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- Trust bar -->
+    <section class="px-6 py-12 border-t border-[#243526] max-w-6xl mx-auto">
+      <div class="flex flex-wrap items-center justify-center gap-8 text-mint/30 text-xs">
+        <span class="flex items-center gap-2">✓ 3,500+ verified contractors</span>
+        <span class="flex items-center gap-2">✓ Gold Shield tier verified</span>
+        <span class="flex items-center gap-2">✓ Free city matching</span>
+        <span class="flex items-center gap-2">✓ ON · MB · BC · QC · NL</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-6 py-8 text-center text-xs text-mint/20">
+      <p>CanadaRebates by Aiolos Media · Helping Canadians claim what's theirs</p>
+    </footer>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0f0a]/95 hidden">
+    <div class="text-center">
+      <div class="relative w-20 h-20 mx-auto mb-6">
+        <div class="absolute inset-0 rounded-full border-2 border-[#6ee7a0]/20"></div>
+        <div class="absolute inset-0 rounded-full border-2 border-transparent border-t-[#6ee7a0] animate-spin" style="animation-duration: 1s;"></div>
+        <div class="absolute inset-3 rounded-full border-2 border-transparent border-b-[#4caf50] animate-spin" style="animation-duration: 1.5s; animation-direction: reverse;"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-2xl">🍁</div>
+      </div>
+      <h2 class="text-xl font-bold text-white mb-2">Finding rebates in <span id="loading-city">your city</span>...</h2>
+      <p class="text-mint/50 text-sm">Scanning our database and enriching with live data</p>
+    </div>
+  </div>
+
+  <!-- Error toast -->
+  <div id="error-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass-card px-6 py-3 rounded-2xl text-sm text-[#ff8a80] hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
