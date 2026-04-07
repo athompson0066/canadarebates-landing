@@ -156,6 +156,8 @@ function renderResults(data, city, province) {
           </div>
         ` : ''}
 
+        ${c.bio ? `<p class="text-xs text-mint/70 mb-3 line-clamp-2">${c.bio}</p>` : ''}
+
         <div class="space-y-1 mb-4 text-xs text-mint/40">
           ${c.city ? `<div>📍 ${c.city}, ${c.province}</div>` : `<div>📍 ${c.province}</div>`}
           ${c.phone ? `<div>📞 ${c.phone}</div>` : ''}
