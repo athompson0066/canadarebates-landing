@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Listing - CanadaRebates</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#1a3a2a',
+            gold: '#c9a227',
+            mint: '#b8d4c8'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0f1f17; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-mint font-sans">
+  <div class="max-w-2xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gold mb-2">CanadaRebates</h1>
+      <p class="text-mint/60">Verify Your Contractor Listing</p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-12">
+      <div class="animate-spin w-8 h-8 border-2 border-gold border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p class="text-mint/60">Verifying your listing...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden bg-forest/50 border border-mint/20 rounded-xl p-8 text-center">
+      <div class="text-4xl mb-4">⚠️</div>
+      <h2 class="text-xl font-bold text-gold mb-2">Invalid or Expired Link</h2>
+      <p class="text-mint/60 mb-6">This verification link is no longer valid. Please request a new one.</p>
+      <a href="https://canadarebates-landing.vercel.app" class="inline-block px-6 py-3 bg-gold text-forest font-semibold rounded-lg hover:bg-gold/90 transition">
+        Return to Homepage
+      </a>
+    </div>
+
+    <!-- Contractor Details Form -->
+    <div id="contractor-form" class="hidden">
+      <div class="bg-forest/50 border border-mint/20 rounded-xl overflow-hidden">
+        <!-- Listing Preview Header -->
+        <div class="bg-gold/10 px-6 py-4 border-b border-mint/10">
+          <h2 class="font-semibold text-gold">Your Current Listing Preview</h2>
+        </div>
+        
+        <!-- Listing Card -->
+        <div class="p-6 border-b border-mint/10">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h3 id="contractor-name" class="text-xl font-bold text-white">Loading...</h3>
+              <p id="contractor-company" class="text-mint/60 text-sm">Loading...</p>
+            </div>
+            <span id="verified-badge" class="hidden px-2 py-1 text-xs bg-gold text-forest rounded-full font-semibold">✓ Verified</span>
+          </div>
+          
+          <div id="contractor-bio" class="text-mint/80 text-sm mb-4 line-clamp-2"></div>
+          
+          <div id="contractor-services" class="flex flex-wrap gap-2 mb-4"></div>
+          
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-mint/40">Location:</span>
+              <span id="contractor-location" class="text-mint ml-1"></span>
+            </div>
+            <div>
+              <span class="text-mint/40">Phone:</span>
+              <span id="contractor-phone" class="text-mint ml-1"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="p-6">
+          <h3 class="font-semibold mb-4">Update Your Information</h3>
+          
+          <form id="update-form" class="space-y-4">
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Business Name</label>
+              <input type="text" id="field-company" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none">
+            </div>
+            
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Contact Name</label>
+              <input type="text" id="field-name" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none">
+            </div>
+            
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Phone Number</label>
+              <input type="tel" id="field-phone" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none">
+            </div>
+            
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Email</label>
+              <input type="email" id="field-email" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none">
+            </div>
+            
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Website</label>
+              <input type="url" id="field-website" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none">
+            </div>
+            
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Services (comma separated)</label>
+              <input type="text" id="field-services" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none" placeholder="Heat Pumps, HVAC, Installation">
+            </div>
+            
+            <div>
+              <label class="block text-sm text-mint/60 mb-1">Description</label>
+              <textarea id="field-bio" rows="3" class="w-full px-4 py-2 bg-forest border border-mint/20 rounded-lg text-mint focus:border-gold focus:outline-none resize-none" placeholder="Tell customers about your business..."></textarea>
+            </div>
+
+            <!-- Verification Status -->
+            <div id="verification-status" class="p-4 bg-forest rounded-lg border border-mint/10">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-semibold">Listing Status</p>
+                  <p id="status-text" class="text-sm text-mint/60">Unverified</p>
+                </div>
+                <div id="status-icon" class="w-8 h-8 rounded-full bg-mint/20 flex items-center justify-center">✗</div>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-gold text-forest font-bold rounded-lg hover:bg-gold/90 transition flex items-center justify-center gap-2">
+              <span>Save Changes</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Upgrade CTA -->
+      <div id="upgrade-cta" class="mt-6 bg-gradient-to-r from-gold/20 to-gold/5 border border-gold/30 rounded-xl p-6 text-center hidden">
+        <div class="text-3xl mb-2">⭐</div>
+        <h3 class="text-lg font-bold text-gold mb-2">Get Verified & Attract More Customers</h3>
+        <p class="text-mint/60 text-sm mb-4">Stand out with a verified badge, priority placement, and unlimited listing updates.</p>
+        <div class="text-2xl font-bold text-white mb-4">$99<span class="text-sm text-mint/60 font-normal">/month</span></div>
+        <button id="upgrade-btn" class="w-full py-3 bg-gold text-forest font-bold rounded-lg hover:bg-gold/90 transition">
+          Upgrade to Verified
+        </button>
+        <p class="text-xs text-mint/40 mt-3">Cancel anytime • Secure PayPal payment</p>
+      </div>
+
+      <!-- Success Message -->
+      <div id="success-message" class="hidden mt-6 bg-forest/50 border border-mint/20 rounded-xl p-8 text-center">
+        <div class="text-5xl mb-4">✅</div>
+        <h2 class="text-xl font-bold text-gold mb-2">Listing Updated!</h2>
+        <p class="text-mint/60 mb-6">Your changes have been saved successfully.</p>
+        <a href="https://canadarebates-landing.vercel.app" class="inline-block px-6 py-3 bg-gold text-forest font-semibold rounded-lg hover:bg-gold/90 transition">
+          View Your Listing
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://irlxxeoocqktiuulfuqb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlybHh4ZW9vY3FrdGl1dWxmdXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5MDU2MTgsImV4cCI6MjA3NDQ4MTYxOH0.1rjQgX34Kj8R_ibQ6LsmXl6J3WI8d5kEXrk3SbB6iyg';
+
+    // Get token from URL
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (!token) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('error').classList.remove('hidden');
+    } else {
+      // Fetch contractor by token
+      fetch(`${SUPABASE_URL}/rest/v1/contractors?verification_token=eq.${token}&verification_expires_at=gt.now()`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      })
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('loading').classList.add('hidden');
+        
+        if (!data || data.length === 0) {
+          document.getElementById('error').classList.remove('hidden');
+        } else {
+          const c = data[0];
+          document.getElementById('contractor-form').classList.remove('hidden');
+          
+          // Populate form
+          document.getElementById('contractor-name').textContent = c.name || 'Unknown';
+          document.getElementById('contractor-company').textContent = c.company || '';
+          document.getElementById('contractor-bio').textContent = c.bio || 'No description provided';
+          document.getElementById('contractor-location').textContent = `${c.city || ''}, ${c.province || ''}`;
+          document.getElementById('contractor-phone').textContent = c.phone || 'N/A';
+          
+          // Services tags
+          const servicesEl = document.getElementById('contractor-services');
+          if (c.services && c.services.length > 0) {
+            c.services.slice(0, 4).forEach(s => {
+              servicesEl.innerHTML += `<span class="text-xs px-2 py-1 rounded-full bg-forest text-mint/60 border border-mint/20">${s}</span>`;
+            });
+          }
+          
+          // Form fields
+          document.getElementById('field-company').value = c.company || '';
+          document.getElementById('field-name').value = c.name || '';
+          document.getElementById('field-phone').value = c.phone || '';
+          document.getElementById('field-email').value = c.email || '';
+          document.getElementById('field-website').value = c.website || '';
+          document.getElementById('field-services').value = (c.services || []).join(', ');
+          document.getElementById('field-bio').value = c.bio || '';
+          
+          // Verified badge
+          if (c.is_verified) {
+            document.getElementById('verified-badge').classList.remove('hidden');
+            document.getElementById('status-text').textContent = 'Verified';
+            document.getElementById('status-icon').innerHTML = '✓';
+            document.getElementById('status-icon').classList.remove('bg-mint/20');
+            document.getElementById('status-icon').classList.add('bg-green-500/20');
+          } else {
+            // Show upgrade CTA for unverified
+            document.getElementById('upgrade-cta').classList.remove('hidden');
+          }
+          
+          // Store contractor ID for updates
+          window.contractorId = c.id;
+        }
+      })
+      .catch(() => {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error').classList.remove('hidden');
+      });
+    }
+
+    // Handle form submission
+    document.getElementById('update-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const updates = {
+        company: document.getElementById('field-company').value || null,
+        name: document.getElementById('field-name').value || null,
+        phone: document.getElementById('field-phone').value || null,
+        email: document.getElementById('field-email').value || null,
+        website: document.getElementById('field-website').value || null,
+        bio: document.getElementById('field-bio').value || null,
+        services: document.getElementById('field-services').value.split(',').map(s => s.trim()).filter(Boolean),
+        updated_at: new Date().toISOString()
+      };
+      
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-pulse">Saving...</span>';
+      
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/contractors?id=eq.${window.contractorId}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(updates)
+        });
+        
+        if (res.ok) {
+          document.getElementById('contractor-form').querySelector('.bg-forest\\/50').classList.add('hidden');
+          document.getElementById('upgrade-cta').classList.add('hidden');
+          document.getElementById('success-message').classList.remove('hidden');
+        } else {
+          throw new Error('Update failed');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Save Changes</span>';
+        alert('Failed to save. Please try again.');
+      }
+    });
+
+    // Upgrade button - redirects to PayPal
+    document.getElementById('upgrade-btn')?.addEventListener('click', () => {
+      const contractorId = window.contractorId;
+      // This would link to PayPal subscription - to be configured
+      const paypalLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YOUR_BUTTON_ID&custom=${contractorId}`;
+      window.open(paypalLink, '_blank');
+    });
+  </script>
+</body>
+</html>
