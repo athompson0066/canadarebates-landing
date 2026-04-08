@@ -35,6 +35,11 @@
     .pulse-dot { animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     .check-icon { color: #6ee7a0; }
+    .step-indicator { transition: all 0.3s ease; }
+    .step-active { background: #c9a227; color: #0a0f0a; }
+    .step-done { background: #6ee7a0; color: #0a0f0a; }
+    .step-inactive { background: rgba(110, 231, 160, 0.2); color: rgba(110, 231, 160, 0.5); }
+    #paypal-button-container { min-height: 50px; }
   </style>
 </head>
 <body class="min-h-screen text-mint overflow-x-hidden">
@@ -43,7 +48,7 @@
   <div class="blob w-[400px] h-[400px] bg-[#2e7d32]/15 bottom-0 left-0 fixed rounded-full blur-3xl"></div>
 
   <div class="relative z-10">
-    <!-- Header with Nav -->
+    <!-- Header -->
     <header class="p-4 md:p-6 flex items-center justify-between max-w-6xl mx-auto">
       <a href="/" class="flex items-center gap-3 hover:opacity-80 transition">
         <div class="text-2xl">🍁</div>
@@ -74,250 +79,213 @@
       </nav>
     </div>
 
-    <!-- Hero -->
-    <section class="px-6 py-12 md:py-16 max-w-5xl mx-auto text-center">
-      <div class="inline-block px-4 py-1 mb-6 rounded-full bg-gold/10 border border-gold/30 text-gold text-sm font-medium">
-        🏆 Premium Contractor Program
+    <!-- Step Indicator -->
+    <div class="px-6 py-8 max-w-2xl mx-auto">
+      <div class="flex items-center justify-center gap-4 mb-8">
+        <div id="step1-indicator" class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm step-active">1</div>
+        <div class="w-16 h-0.5 bg-mint/20"></div>
+        <div id="step2-indicator" class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm step-inactive">2</div>
       </div>
-      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-        Get More Leads from <span class="text-gold">Rebate-Ready Homeowners</span>
-      </h1>
-      <p class="text-lg md:text-xl text-mint/70 max-w-2xl mx-auto mb-8">
-        Your listing is already showing up in searches. Verify it to capture leads, add your website, and get featured placement.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="#pricing" class="cta-btn px-8 py-4 rounded-xl font-bold text-white">
-          Get Verified — $99/month
-        </a>
-        <a href="#benefits" class="px-8 py-4 rounded-xl font-semibold text-mint border border-mint/30 hover:bg-mint/10 transition">
-          See What's Included
-        </a>
-      </div>
-    </section>
+      <h1 id="form-title" class="text-3xl md:text-4xl font-bold text-white text-center mb-2">Claim Your Free Listing</h1>
+      <p id="form-subtitle" class="text-mint/60 text-center mb-8">Fill out your details to get started — takes less than 2 minutes</p>
+    </div>
 
-    <!-- Social Proof -->
-    <section class="px-6 py-8 max-w-4xl mx-auto">
-      <div class="glass-card rounded-2xl p-6 text-center">
-        <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+    <!-- Form Section -->
+    <section id="form-section" class="px-6 pb-16 max-w-2xl mx-auto">
+      <div class="glass-card rounded-3xl p-8 green-glow">
+        <form id="contractor-form" class="space-y-6">
+          <!-- Business Name -->
           <div>
-            <div class="text-3xl font-bold text-white">3,500+</div>
-            <div class="text-sm text-mint/50">Contractors Listed</div>
+            <label class="block text-sm font-medium text-mint mb-2">Business Name *</label>
+            <input type="text" id="company" name="company" required 
+              class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+              placeholder="ABC Heating & Cooling Ltd.">
           </div>
+
+          <!-- Contact Name -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-mint mb-2">First Name *</label>
+              <input type="text" id="first_name" name="first_name" required 
+                class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+                placeholder="John">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-mint mb-2">Last Name *</label>
+              <input type="text" id="last_name" name="last_name" required 
+                class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+                placeholder="Smith">
+            </div>
+          </div>
+
+          <!-- Email -->
           <div>
-            <div class="text-3xl font-bold text-white">500+</div>
-            <div class="text-sm text-mint/50">Daily Visitors</div>
+            <label class="block text-sm font-medium text-mint mb-2">Email *</label>
+            <input type="email" id="email" name="email" required 
+              class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+              placeholder="john@abcheating.ca">
           </div>
+
+          <!-- Phone -->
           <div>
-            <div class="text-3xl font-bold text-white">13</div>
-            <div class="text-sm text-mint/50">Provinces Covered</div>
+            <label class="block text-sm font-medium text-mint mb-2">Phone *</label>
+            <input type="tel" id="phone" name="phone" required 
+              class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+              placeholder="(204) 555-1234">
           </div>
+
+          <!-- Website -->
           <div>
-            <div class="text-3xl font-bold text-gold">★★★★★</div>
-            <div class="text-sm text-mint/50">Verified Badge</div>
+            <label class="block text-sm font-medium text-mint mb-2">Website <span class="text-mint/40">(optional)</span></label>
+            <input type="url" id="website" name="website" 
+              class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+              placeholder="https://abcheating.ca">
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Benefits -->
-    <section id="benefits" class="px-6 py-16 max-w-5xl mx-auto">
-      <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-12">What You Get with Verification</h2>
-      
-      <div class="grid md:grid-cols-2 gap-6">
-        <!-- Benefit 1 -->
-        <div class="glass-card rounded-2xl p-6 green-glow">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">📍</div>
+          <!-- City & Province -->
+          <div class="grid grid-cols-2 gap-4">
             <div>
-              <h3 class="text-lg font-bold text-white mb-2">Top Search Placement</h3>
-              <p class="text-mint/70">Verified contractors appear first in province and city searches. Homeowners see you before anyone else.</p>
+              <label class="block text-sm font-medium text-mint mb-2">City *</label>
+              <input type="text" id="city" name="city" required 
+                class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition"
+                placeholder="Winnipeg">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-mint mb-2">Province *</label>
+              <select id="province" name="province" required 
+                class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white focus:outline-none focus:border-mint/50 transition">
+                <option value="" class="bg-pine">Select Province</option>
+                <option value="AB">Alberta</option>
+                <option value="BC">British Columbia</option>
+                <option value="MB">Manitoba</option>
+                <option value="NB">New Brunswick</option>
+                <option value="NL">Newfoundland and Labrador</option>
+                <option value="NS">Nova Scotia</option>
+                <option value="NT">Northwest Territories</option>
+                <option value="NU">Nunavut</option>
+                <option value="ON">Ontario</option>
+                <option value="PE">Prince Edward Island</option>
+                <option value="QC">Quebec</option>
+                <option value="SK">Saskatchewan</option>
+                <option value="YT">Yukon</option>
+              </select>
             </div>
           </div>
-        </div>
 
-        <!-- Benefit 2 -->
-        <div class="glass-card rounded-2xl p-6 green-glow">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">🛡️</div>
-            <div>
-              <h3 class="text-lg font-bold text-white mb-2">Gold Shield Badge</h3>
-              <p class="text-mint/70">Stand out with the official verified badge. Shows homeowners you're a legitimate, government-listed contractor.</p>
+          <!-- Services -->
+          <div>
+            <label class="block text-sm font-medium text-mint mb-2">Services You Offer *</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="services" value="Heat Pumps" class="w-5 h-5 rounded border-mint/30 bg-pine/50 text-gold focus:ring-gold">
+                <span class="text-sm text-mint/80">Heat Pumps</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="services" value="HVAC" class="w-5 h-5 rounded border-mint/30 bg-pine/50 text-gold focus:ring-gold">
+                <span class="text-sm text-mint/80">HVAC</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="services" value="Solar Panels" class="w-5 h-5 rounded border-mint/30 bg-pine/50 text-gold focus:ring-gold">
+                <span class="text-sm text-mint/80">Solar Panels</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="services" value="Insulation" class="w-5 h-5 rounded border-mint/30 bg-pine/50 text-gold focus:ring-gold">
+                <span class="text-sm text-mint/80">Insulation</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="services" value="Windows & Doors" class="w-5 h-5 rounded border-mint/30 bg-pine/50 text-gold focus:ring-gold">
+                <span class="text-sm text-mint/80">Windows & Doors</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="services" value="General Contracting" class="w-5 h-5 rounded border-mint/30 bg-pine/50 text-gold focus:ring-gold">
+                <span class="text-sm text-mint/80">General Contracting</span>
+              </label>
             </div>
           </div>
-        </div>
 
-        <!-- Benefit 3 -->
-        <div class="glass-card rounded-2xl p-6 green-glow">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">🔗</div>
-            <div>
-              <h3 class="text-lg font-bold text-white mb-2">Your Website Link</h3>
-              <p class="text-mint/70">Add your website, phone, and booking link. Homeowners can contact you directly — no middleman.</p>
-            </div>
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-medium text-mint mb-2">Description <span class="text-mint/40">(optional)</span></label>
+            <textarea id="description" name="description" rows="3" 
+              class="w-full px-4 py-3 rounded-xl bg-pine/50 border border-mint/20 text-white placeholder-mint/40 focus:outline-none focus:border-mint/50 transition resize-none"
+              placeholder="Tell homeowners about your business, years of experience, and what makes you special..."></textarea>
           </div>
-        </div>
 
-        <!-- Benefit 4 -->
-        <div class="glass-card rounded-2xl p-6 green-glow">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">📧</div>
-            <div>
-              <h3 class="text-lg font-bold text-white mb-2">Direct Quote Requests</h3>
-              <p class="text-mint/70">Homeowners can request quotes directly from your listing. You get instant email notifications.</p>
-            </div>
-          </div>
-        </div>
+          <!-- Submit Button -->
+          <button type="submit" id="submit-btn" class="cta-btn w-full py-4 rounded-xl font-bold text-white text-lg">
+            Continue to Payment — $99/month
+          </button>
 
-        <!-- Benefit 5 -->
-        <div class="glass-card rounded-2xl p-6 green-glow">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">📊</div>
-            <div>
-              <h3 class="text-lg font-bold text-white mb-2">Lead Dashboard</h3>
-              <p class="text-mint/70">Track how many homeowners view your profile, click through to your site, and request quotes.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Benefit 6 -->
-        <div class="glass-card rounded-2xl p-6 green-glow">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">⚡</div>
-            <div>
-              <h3 class="text-lg font-bold text-white mb-2">Instant Setup</h3>
-              <p class="text-mint/70">Verify in under 2 minutes. Your enhanced listing goes live immediately after confirmation.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pricing -->
-    <section id="pricing" class="px-6 py-16 max-w-2xl mx-auto">
-      <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-4">Simple Pricing</h2>
-      <p class="text-mint/60 text-center mb-12">One flat rate. Cancel anytime. No hidden fees.</p>
-
-      <div class="glass-card rounded-3xl p-8 md:p-10 gold-glow border-2 border-gold/30">
-        <div class="text-center mb-8">
-          <div class="inline-block px-4 py-1 mb-4 rounded-full bg-gold/20 text-gold text-sm font-medium">
-            Verified Contractor
-          </div>
-          <div class="flex items-center justify-center gap-1 mb-2">
-            <span class="text-4xl font-bold text-white">$99</span>
-            <span class="text-mint/50">/month</span>
-          </div>
-          <p class="text-mint/60 text-sm">Billed monthly. Cancel anytime.</p>
-        </div>
-
-        <ul class="space-y-4 mb-8">
-          <li class="flex items-center gap-3">
-            <span class="check-icon">✓</span>
-            <span class="text-mint/80">Top placement in your province</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="check-icon">✓</span>
-            <span class="text-mint/80">Gold Shield verified badge</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="check-icon">✓</span>
-            <span class="text-mint/80">Website & contact links</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="check-icon">✓</span>
-            <span class="text-mint/80">Direct quote requests</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="check-icon">✓</span>
-            <span class="text-mint/80">Lead dashboard & analytics</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="check-icon">✓</span>
-            <span class="text-mint/80">Priority support</span>
-          </li>
-        </ul>
-
-        <!-- PayPal Button -->
-        <div class="text-center">
-          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-            <input type="hidden" name="cmd" value="_s-xclick">
-            <input type="hidden" name="hosted_button_id" value="YOUR_PAYPAL_BUTTON_ID">
-            <button type="submit" class="cta-btn w-full py-4 rounded-xl font-bold text-white">
-              🍁 Verify Your Listing — $99/month
-            </button>
-          </form>
-          <p class="text-mint/40 text-xs mt-4">
-            Secure payment via PayPal. Cancel anytime from your PayPal account.
+          <p class="text-center text-xs text-mint/40">
+            By submitting, you agree to appear in our contractor directory. Payment required to activate verified status.
           </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Payment Section (hidden initially) -->
+    <section id="payment-section" class="px-6 pb-16 max-w-2xl mx-auto hidden">
+      <div class="glass-card rounded-3xl p-8 gold-glow border-2 border-gold/30">
+        <div class="text-center mb-6">
+          <div class="text-4xl mb-4">🍁</div>
+          <h2 class="text-2xl font-bold text-white mb-2">Almost Done!</h2>
+          <p class="text-mint/70">Complete your payment to activate your verified listing</p>
         </div>
+
+        <!-- Order Summary -->
+        <div class="bg-pine/50 rounded-xl p-4 mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-mint/70">Verified Listing</span>
+            <span class="text-white font-medium">$99/month</span>
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-mint/50">Contractor ID</span>
+            <span id="contractor-id-display" class="text-mint/50 font-mono"></span>
+          </div>
+        </div>
+
+        <!-- PayPal Container -->
+        <div id="paypal-button-container" class="mb-4"></div>
+
+        <p class="text-center text-xs text-mint/40">
+          Secure payment via PayPal. Cancel anytime from your PayPal account.
+        </p>
+
+        <button onclick="goBack()" class="mt-4 w-full py-3 rounded-xl font-semibold text-mint/60 border border-mint/20 hover:bg-mint/5 transition">
+          ← Go Back
+        </button>
       </div>
     </section>
 
-    <!-- FAQ -->
-    <section class="px-6 py-16 max-w-3xl mx-auto">
-      <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-12">Frequently Asked Questions</h2>
-      
-      <div class="space-y-4">
-        <details class="glass-card rounded-xl overflow-hidden group">
-          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
-            <span>How do I know if my listing is already on CanadaRebates?</span>
-            <span class="text-mint/50">+</span>
-          </summary>
-          <div class="px-6 pb-4 text-mint/70">
-            If you received an email from us, your company is already listed. You can also search your business name on our homepage to check.
-          </div>
-        </details>
-
-        <details class="glass-card rounded-xl overflow-hidden">
-          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
-            <span>Where does CanadaRebates get contractor data?</span>
-            <span class="text-mint/50">+</span>
-          </summary>
-          <div class="px-6 pb-4 text-mint/70">
-            We aggregate publicly available contractor lists from federal, provincial, and utility rebate programs across Canada. Home improvement contractors who appear in government rebate programs are automatically included.
-          </div>
-        </details>
-
-        <details class="glass-card rounded-xl overflow-hidden">
-          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
-            <span>Can I cancel anytime?</span>
-            <span class="text-mint/50">+</span>
-          </summary>
-          <div class="px-6 pb-4 text-mint/70">
-            Yes. You can cancel your subscription anytime from your PayPal account. Your verified status will remain active until the end of your billing period.
-          </div>
-        </details>
-
-        <details class="glass-card rounded-xl overflow-hidden">
-          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
-            <span>What happens after I pay?</span>
-            <span class="text-mint/50">+</span>
-          </summary>
-          <div class="px-6 pb-4 text-mint/70">
-            You'll receive an email with a link to complete your profile. Add your website, phone number, services, and service areas. Your enhanced listing goes live within 24 hours.
-          </div>
-        </details>
-
-        <details class="glass-card rounded-xl overflow-hidden">
-          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
-            <span>How many leads can I expect?</span>
-            <span class="text-mint/50">+</span>
-          </summary>
-          <div class="px-6 pb-4 text-mint/70">
-            Lead volume depends on your service area and demand. Verified contractors in high-demand provinces (Ontario, BC, Alberta) typically receive 5-15 quote requests per month during peak season.
-          </div>
-        </details>
+    <!-- Success Section (hidden initially) -->
+    <section id="success-section" class="px-6 pb-16 max-w-2xl mx-auto hidden">
+      <div class="glass-card rounded-3xl p-8 text-center green-glow">
+        <div class="text-6xl mb-6">🎉</div>
+        <h2 class="text-3xl font-bold text-white mb-4">You're All Set!</h2>
+        <p class="text-mint/70 mb-6">
+          Your listing is now pending verification. Once your payment is confirmed, you'll receive a verification email to complete your profile.
+        </p>
+        <div class="bg-pine/50 rounded-xl p-4 mb-6 text-left">
+          <p class="text-sm text-mint/70 mb-2">What happens next:</p>
+          <ol class="text-sm text-mint/60 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-gold font-bold">1.</span>
+              <span>Check your email for a verification link</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-gold font-bold">2.</span>
+              <span>Click the link to add your website, photos, and service details</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-gold font-bold">3.</span>
+              <span>Your enhanced listing goes live within 24 hours</span>
+            </li>
+          </ol>
+        </div>
+        <a href="/" class="cta-btn inline-block px-8 py-4 rounded-xl font-bold text-white">
+          Browse Contractors →
+        </a>
       </div>
-    </section>
-
-    <!-- Final CTA -->
-    <section class="px-6 py-16 text-center">
-      <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Get More Leads?</h2>
-      <p class="text-mint/60 mb-8 max-w-xl mx-auto">
-        Your listing is already visible to 500+ daily visitors. Verify it to capture that traffic as qualified leads.
-      </p>
-      <a href="#pricing" class="cta-btn inline-block px-8 py-4 rounded-xl font-bold text-white">
-        Get Verified Today — $99/month
-      </a>
     </section>
 
     <!-- Footer -->
@@ -325,5 +293,202 @@
       <p>© 2026 CanadaRebates · Helping Canadians claim what's theirs</p>
     </footer>
   </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    // Supabase config
+    const SUPABASE_URL = 'https://irlxxeoocqktiuulfuqb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlybHh4ZW9vY3FrdGl1dWxmdXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5MDU2MTgsImV4cCI6MjA3NDQ4MTYxOH0.1rjQgX34Kj8R_ibQ6LsmXl6J3WI8d5kEXrk3SbB6iyg';
+    
+    // PayPal config
+    const PAYPAL_CLIENT_ID = 'AZoLL22xCqUIuxF_fBKFvDstSpMU3k7JNRTlpJUbOQZMuem7JKrqJj9nVxw4lmkDtIpM5KefKIxPs5Wv';
+    
+    // Initialize Supabase
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // State
+    let contractorRecordId = null;
+    let paypalSubscription = null;
+
+    // Generate random token
+    function generateToken(length = 48) {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let token = '';
+      for (let i = 0; i < length; i++) {
+        token += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return token;
+    }
+
+    // Form submission
+    document.getElementById('contractor-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      const formData = {
+        company: document.getElementById('company').value.trim(),
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        email: document.getElementById('email').value.trim().toLowerCase(),
+        phone: document.getElementById('phone').value.trim(),
+        website: document.getElementById('website').value.trim() || null,
+        city: document.getElementById('city').value.trim(),
+        province: document.getElementById('province').value,
+        services: Array.from(document.querySelectorAll('input[name="services"]:checked')).map(cb => cb.value),
+        description: document.getElementById('description').value.trim() || null,
+        verified: false,
+        verification_token: generateToken(),
+        verification_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      };
+
+      if (formData.services.length === 0) {
+        alert('Please select at least one service');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue to Payment — $99/month';
+        return;
+      }
+
+      try {
+        // Insert into Supabase
+        const { data, error } = await supabase
+          .from('contractors')
+          .insert([formData])
+          .select('id')
+          .single();
+
+        if (error) {
+          console.error('Supabase error:', error);
+          alert('Error saving your information. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Continue to Payment — $99/month';
+          return;
+        }
+
+        contractorRecordId = data.id;
+
+        // Show payment section
+        document.getElementById('form-section').classList.add('hidden');
+        document.getElementById('payment-section').classList.remove('hidden');
+        document.getElementById('contractor-id-display').textContent = data.id;
+        document.getElementById('form-title').textContent = 'Complete Payment';
+        document.getElementById('form-subtitle').textContent = 'Your listing is saved — complete payment to activate';
+
+        // Update step indicators
+        document.getElementById('step1-indicator').classList.remove('step-active');
+        document.getElementById('step1-indicator').classList.add('step-done');
+        document.getElementById('step1-indicator').innerHTML = '✓';
+        document.getElementById('step2-indicator').classList.remove('step-inactive');
+        document.getElementById('step2-indicator').classList.add('step-active');
+
+        // Initialize PayPal
+        initPayPal();
+
+      } catch (err) {
+        console.error('Error:', err);
+        alert('An error occurred. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue to Payment — $99/month';
+      }
+    });
+
+    // Go back to form
+    function goBack() {
+      document.getElementById('payment-section').classList.add('hidden');
+      document.getElementById('form-section').classList.remove('hidden');
+      document.getElementById('form-title').textContent = 'Claim Your Free Listing';
+      document.getElementById('form-subtitle').textContent = 'Fill out your details to get started — takes less than 2 minutes';
+      
+      document.getElementById('step1-indicator').classList.add('step-active');
+      document.getElementById('step1-indicator').classList.remove('step-done');
+      document.getElementById('step1-indicator').innerHTML = '1';
+      document.getElementById('step2-indicator').classList.add('step-inactive');
+      document.getElementById('step2-indicator').classList.remove('step-active');
+    }
+
+    // Load PayPal SDK
+    function loadPayPalScript() {
+      return new Promise((resolve, reject) => {
+        if (window.paypal) {
+          resolve();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=CAD&intent=subscription`;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Initialize PayPal buttons
+    async function initPayPal() {
+      try {
+        await loadPayPalScript();
+
+        window.paypal.Buttons({
+          style: {
+            layout: 'vertical',
+            color: 'gold',
+            shape: 'rect',
+            label: 'subscribe'
+          },
+          createSubscription: function(data, actions) {
+            return actions.subscription.create({
+              plan_id: 'P-5DW52910DW079525GSNQXXHY', // Replace with your PayPal plan ID
+              application_context: {
+                brand_name: 'CanadaRebates',
+                shipping_preference: 'NO_SHIPPING'
+              },
+              subscriber: {
+                name: {
+                  given_name: document.getElementById('first_name').value,
+                  surname: document.getElementById('last_name').value
+                },
+                email_address: document.getElementById('email').value
+              }
+            });
+          },
+          onApprove: async function(data, actions) {
+            // Subscription approved
+            paypalSubscription = data.subscriptionID;
+            
+            // Update record with PayPal subscription ID
+            await supabase
+              .from('contractors')
+              .update({ 
+                verified: true, 
+                verified_at: new Date().toISOString(),
+                paypal_subscription_id: data.subscriptionID
+              })
+              .eq('id', contractorRecordId);
+
+            // Show success
+            document.getElementById('payment-section').classList.add('hidden');
+            document.getElementById('success-section').classList.remove('hidden');
+            document.getElementById('form-title').textContent = 'Success!';
+            document.getElementById('form-subtitle').textContent = '';
+
+            document.getElementById('step2-indicator').classList.remove('step-active');
+            document.getElementById('step2-indicator').classList.add('step-done');
+            document.getElementById('step2-indicator').innerHTML = '✓';
+          },
+          onError: function(err) {
+            console.error('PayPal error:', err);
+            alert('Payment failed. Please try again.');
+          }
+        }).render('#paypal-button-container');
+
+      } catch (err) {
+        console.error('PayPal init error:', err);
+        document.getElementById('paypal-button-container').innerHTML = 
+          '<p class="text-red-400 text-center text-sm">Error loading PayPal. Please refresh the page.</p>';
+      }
+    }
+  </script>
 </body>
 </html>
