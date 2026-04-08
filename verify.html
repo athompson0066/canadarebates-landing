@@ -4,22 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verify Your Listing - CanadaRebates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            forest: '#1a3a2a',
-            gold: '#c9a227',
-            mint: '#b8d4c8'
-          }
+            forest: { 50: '#e8f5e9', 100: '#c8e6c9', 200: '#a5d6a7', 300: '#81c784', 400: '#66bb6a', 500: '#4caf50', 600: '#43a047', 700: '#388e3c', 800: '#2e7d32', 900: '#1b5e20' },
+            bark: { 50: '#f1f8e9', 100: '#dcedc8', 200: '#c5e1a5', 300: '#aed581', 400: '#9ccc65', 500: '#8bc34a', 600: '#7cb342', 700: '#689f38', 800: '#558b2f', 900: '#33691e' },
+            pine: { DEFAULT: '#0d1f12', elevated: '#122118', card: '#1a2b1f', border: '#243526' },
+            mint: { DEFAULT: '#6ee7a0', muted: '#4dbd7d', dim: '#2d8a52', pale: '#a8f0c8' }
+          },
+          fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
   <style>
-    body { background: #0f1f17; }
+    * { box-sizing: border-box; }
+    body { background: radial-gradient(ellipse at 60% 0%, #0d1f12 0%, #0a0f0a 60%); font-family: 'Manrope', sans-serif; }
+    .glass-card { background: rgba(18, 33, 24, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(110, 231, 160, 0.1); }
+    .green-glow { box-shadow: 0 0 40px rgba(110, 231, 160, 0.12), 0 0 80px rgba(110, 231, 160, 0.06); }
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -28,13 +36,23 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-mint font-sans">
-  <div class="max-w-2xl mx-auto px-4 py-8">
-    <!-- Header -->
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gold mb-2">CanadaRebates</h1>
-      <p class="text-mint/60">Verify Your Contractor Listing</p>
+<body class="min-h-screen text-mint overflow-x-hidden">
+  <!-- Header -->
+  <header class="p-6 flex items-center justify-between max-w-6xl mx-auto">
+    <a href="https://canadarebates-landing.vercel.app" class="flex items-center gap-3 hover:opacity-80 transition">
+      <div class="text-2xl">🍁</div>
+      <div>
+        <div class="text-sm font-bold text-mint">CanadaRebates</div>
+        <div class="text-xs text-mint/50">Find rebates in your city</div>
+      </div>
+    </a>
+    <div class="flex items-center gap-2 text-xs text-mint/50">
+      <span class="w-2 h-2 rounded-full bg-[#6ee7a0] animate-pulse"></span>
+      <span>3,500+ verified contractors</span>
     </div>
+  </header>
+
+  <div class="max-w-2xl mx-auto px-4 py-8">
 
     <!-- Loading State -->
     <div id="loading" class="text-center py-12">
