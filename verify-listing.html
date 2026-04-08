@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Listing - CanadaRebates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: { 50: '#e8f5e9', 100: '#c8e6c9', 200: '#a5d6a7', 300: '#81c784', 400: '#66bb6a', 500: '#4caf50', 600: '#43a047', 700: '#388e3c', 800: '#2e7d32', 900: '#1b5e20' },
+            bark: { 50: '#f1f8e9', 100: '#dcedc8', 200: '#c5e1a5', 300: '#aed581', 400: '#9ccc65', 500: '#8bc34a', 600: '#7cb342', 700: '#689f38', 800: '#558b2f', 900: '#33691e' },
+            pine: { DEFAULT: '#0d1f12', elevated: '#122118', card: '#1a2b1f', border: '#243526' },
+            mint: { DEFAULT: '#6ee7a0', muted: '#4dbd7d', dim: '#2d8a52', pale: '#a8f0c8' },
+            gold: { DEFAULT: '#c9a227', light: '#e6c85a', dark: '#a68520' }
+          },
+          fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: radial-gradient(ellipse at 60% 0%, #0d1f12 0%, #0a0f0a 60%); font-family: 'Manrope', sans-serif; }
+    .glass-card { background: rgba(18, 33, 24, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(110, 231, 160, 0.1); }
+    .green-glow { box-shadow: 0 0 40px rgba(110, 231, 160, 0.12), 0 0 80px rgba(110, 231, 160, 0.06); }
+    .gold-glow { box-shadow: 0 0 40px rgba(201, 162, 39, 0.2), 0 0 80px rgba(201, 162, 39, 0.1); }
+    .cta-btn { background: linear-gradient(135deg, #c9a227 0%, #a68520 100%); transition: all 0.3s ease; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(201, 162, 39, 0.4); }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .check-icon { color: #6ee7a0; }
+  </style>
+</head>
+<body class="min-h-screen text-mint overflow-x-hidden">
+  <!-- Ambient blobs -->
+  <div class="blob w-[600px] h-[600px] bg-[#1b5e20]/20 -top-40 -right-40 fixed rounded-full blur-3xl"></div>
+  <div class="blob w-[400px] h-[400px] bg-[#2e7d32]/15 bottom-0 left-0 fixed rounded-full blur-3xl"></div>
+
+  <div class="relative z-10">
+    <!-- Header with Nav -->
+    <header class="p-4 md:p-6 flex items-center justify-between max-w-6xl mx-auto">
+      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition">
+        <div class="text-2xl">🍁</div>
+        <div>
+          <div class="text-sm font-bold text-mint">CanadaRebates</div>
+          <div class="text-xs text-mint/50">Find rebates in your city</div>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a href="/" class="text-mint/70 hover:text-mint transition">Home</a>
+        <a href="/about" class="text-mint/70 hover:text-mint transition">About Us</a>
+        <a href="/verify-listing" class="text-gold font-semibold">Verify Your Listing</a>
+        <a href="/contact" class="text-mint/70 hover:text-mint transition">Contact Us</a>
+      </nav>
+      <div class="flex items-center gap-2 text-xs text-mint/50">
+        <span class="w-2 h-2 rounded-full bg-[#6ee7a0] pulse-dot"></span>
+        <span>3,500+ verified contractors</span>
+      </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <div class="md:hidden px-4 pb-4">
+      <nav class="flex flex-wrap justify-center gap-4 text-xs">
+        <a href="/" class="text-mint/70 hover:text-mint">Home</a>
+        <a href="/about" class="text-mint/70 hover:text-mint">About Us</a>
+        <a href="/verify-listing" class="text-gold font-semibold">Verify Your Listing</a>
+        <a href="/contact" class="text-mint/70 hover:text-mint">Contact Us</a>
+      </nav>
+    </div>
+
+    <!-- Hero -->
+    <section class="px-6 py-12 md:py-16 max-w-5xl mx-auto text-center">
+      <div class="inline-block px-4 py-1 mb-6 rounded-full bg-gold/10 border border-gold/30 text-gold text-sm font-medium">
+        🏆 Premium Contractor Program
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+        Get More Leads from <span class="text-gold">Rebate-Ready Homeowners</span>
+      </h1>
+      <p class="text-lg md:text-xl text-mint/70 max-w-2xl mx-auto mb-8">
+        Your listing is already showing up in searches. Verify it to capture leads, add your website, and get featured placement.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#pricing" class="cta-btn px-8 py-4 rounded-xl font-bold text-white">
+          Get Verified — $99/month
+        </a>
+        <a href="#benefits" class="px-8 py-4 rounded-xl font-semibold text-mint border border-mint/30 hover:bg-mint/10 transition">
+          See What's Included
+        </a>
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="px-6 py-8 max-w-4xl mx-auto">
+      <div class="glass-card rounded-2xl p-6 text-center">
+        <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+          <div>
+            <div class="text-3xl font-bold text-white">3,500+</div>
+            <div class="text-sm text-mint/50">Contractors Listed</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">500+</div>
+            <div class="text-sm text-mint/50">Daily Visitors</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">13</div>
+            <div class="text-sm text-mint/50">Provinces Covered</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-gold">★★★★★</div>
+            <div class="text-sm text-mint/50">Verified Badge</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits -->
+    <section id="benefits" class="px-6 py-16 max-w-5xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-12">What You Get with Verification</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Benefit 1 -->
+        <div class="glass-card rounded-2xl p-6 green-glow">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">📍</div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Top Search Placement</h3>
+              <p class="text-mint/70">Verified contractors appear first in province and city searches. Homeowners see you before anyone else.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="glass-card rounded-2xl p-6 green-glow">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">🛡️</div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Gold Shield Badge</h3>
+              <p class="text-mint/70">Stand out with the official verified badge. Shows homeowners you're a legitimate, government-listed contractor.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="glass-card rounded-2xl p-6 green-glow">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">🔗</div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Your Website Link</h3>
+              <p class="text-mint/70">Add your website, phone, and booking link. Homeowners can contact you directly — no middleman.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefit 4 -->
+        <div class="glass-card rounded-2xl p-6 green-glow">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">📧</div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Direct Quote Requests</h3>
+              <p class="text-mint/70">Homeowners can request quotes directly from your listing. You get instant email notifications.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefit 5 -->
+        <div class="glass-card rounded-2xl p-6 green-glow">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">📊</div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Lead Dashboard</h3>
+              <p class="text-mint/70">Track how many homeowners view your profile, click through to your site, and request quotes.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefit 6 -->
+        <div class="glass-card rounded-2xl p-6 green-glow">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">⚡</div>
+            <div>
+              <h3 class="text-lg font-bold text-white mb-2">Instant Setup</h3>
+              <p class="text-mint/70">Verify in under 2 minutes. Your enhanced listing goes live immediately after confirmation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="px-6 py-16 max-w-2xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-4">Simple Pricing</h2>
+      <p class="text-mint/60 text-center mb-12">One flat rate. Cancel anytime. No hidden fees.</p>
+
+      <div class="glass-card rounded-3xl p-8 md:p-10 gold-glow border-2 border-gold/30">
+        <div class="text-center mb-8">
+          <div class="inline-block px-4 py-1 mb-4 rounded-full bg-gold/20 text-gold text-sm font-medium">
+            Verified Contractor
+          </div>
+          <div class="flex items-center justify-center gap-1 mb-2">
+            <span class="text-4xl font-bold text-white">$99</span>
+            <span class="text-mint/50">/month</span>
+          </div>
+          <p class="text-mint/60 text-sm">Billed monthly. Cancel anytime.</p>
+        </div>
+
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-center gap-3">
+            <span class="check-icon">✓</span>
+            <span class="text-mint/80">Top placement in your province</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="check-icon">✓</span>
+            <span class="text-mint/80">Gold Shield verified badge</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="check-icon">✓</span>
+            <span class="text-mint/80">Website & contact links</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="check-icon">✓</span>
+            <span class="text-mint/80">Direct quote requests</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="check-icon">✓</span>
+            <span class="text-mint/80">Lead dashboard & analytics</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="check-icon">✓</span>
+            <span class="text-mint/80">Priority support</span>
+          </li>
+        </ul>
+
+        <!-- PayPal Button -->
+        <div class="text-center">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="YOUR_PAYPAL_BUTTON_ID">
+            <button type="submit" class="cta-btn w-full py-4 rounded-xl font-bold text-white">
+              🍁 Verify Your Listing — $99/month
+            </button>
+          </form>
+          <p class="text-mint/40 text-xs mt-4">
+            Secure payment via PayPal. Cancel anytime from your PayPal account.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="px-6 py-16 max-w-3xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-12">Frequently Asked Questions</h2>
+      
+      <div class="space-y-4">
+        <details class="glass-card rounded-xl overflow-hidden group">
+          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
+            <span>How do I know if my listing is already on CanadaRebates?</span>
+            <span class="text-mint/50">+</span>
+          </summary>
+          <div class="px-6 pb-4 text-mint/70">
+            If you received an email from us, your company is already listed. You can also search your business name on our homepage to check.
+          </div>
+        </details>
+
+        <details class="glass-card rounded-xl overflow-hidden">
+          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
+            <span>Where does CanadaRebates get contractor data?</span>
+            <span class="text-mint/50">+</span>
+          </summary>
+          <div class="px-6 pb-4 text-mint/70">
+            We aggregate publicly available contractor lists from federal, provincial, and utility rebate programs across Canada. Home improvement contractors who appear in government rebate programs are automatically included.
+          </div>
+        </details>
+
+        <details class="glass-card rounded-xl overflow-hidden">
+          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
+            <span>Can I cancel anytime?</span>
+            <span class="text-mint/50">+</span>
+          </summary>
+          <div class="px-6 pb-4 text-mint/70">
+            Yes. You can cancel your subscription anytime from your PayPal account. Your verified status will remain active until the end of your billing period.
+          </div>
+        </details>
+
+        <details class="glass-card rounded-xl overflow-hidden">
+          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
+            <span>What happens after I pay?</span>
+            <span class="text-mint/50">+</span>
+          </summary>
+          <div class="px-6 pb-4 text-mint/70">
+            You'll receive an email with a link to complete your profile. Add your website, phone number, services, and service areas. Your enhanced listing goes live within 24 hours.
+          </div>
+        </details>
+
+        <details class="glass-card rounded-xl overflow-hidden">
+          <summary class="px-6 py-4 cursor-pointer text-mint font-medium flex justify-between items-center">
+            <span>How many leads can I expect?</span>
+            <span class="text-mint/50">+</span>
+          </summary>
+          <div class="px-6 pb-4 text-mint/70">
+            Lead volume depends on your service area and demand. Verified contractors in high-demand provinces (Ontario, BC, Alberta) typically receive 5-15 quote requests per month during peak season.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="px-6 py-16 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Get More Leads?</h2>
+      <p class="text-mint/60 mb-8 max-w-xl mx-auto">
+        Your listing is already visible to 500+ daily visitors. Verify it to capture that traffic as qualified leads.
+      </p>
+      <a href="#pricing" class="cta-btn inline-block px-8 py-4 rounded-xl font-bold text-white">
+        Get Verified Today — $99/month
+      </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="p-6 text-center text-xs text-mint/30 mt-12">
+      <p>© 2026 CanadaRebates · Helping Canadians claim what's theirs</p>
+    </footer>
+  </div>
+</body>
+</html>
