@@ -16,7 +16,8 @@
             forest: { 50: '#e8f5e9', 100: '#c8e6c9', 200: '#a5d6a7', 300: '#81c784', 400: '#66bb6a', 500: '#4caf50', 600: '#43a047', 700: '#388e3c', 800: '#2e7d32', 900: '#1b5e20' },
             bark: { 50: '#f1f8e9', 100: '#dcedc8', 200: '#c5e1a5', 300: '#aed581', 400: '#9ccc65', 500: '#8bc34a', 600: '#7cb342', 700: '#689f38', 800: '#558b2f', 900: '#33691e' },
             pine: { DEFAULT: '#0d1f12', elevated: '#122118', card: '#1a2b1f', border: '#243526' },
-            mint: { DEFAULT: '#6ee7a0', muted: '#4dbd7d', dim: '#2d8a52', pale: '#a8f0c8' }
+            mint: { DEFAULT: '#6ee7a0', muted: '#4dbd7d', dim: '#2d8a52', pale: '#a8f0c8' },
+            gold: { DEFAULT: '#c9a227', light: '#e6c85a', dark: '#a68520' }
           },
           fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'] }
         }
@@ -34,6 +35,12 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+  </style>
+  <style>
+    .cta-btn { background: linear-gradient(135deg, #c9a227 0%, #a68520 100%); transition: all 0.3s ease; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(201, 162, 39, 0.4); }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #c9a227; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="min-h-screen text-mint overflow-x-hidden">
@@ -323,12 +330,79 @@
       }
     });
 
-    // Upgrade button - redirects to PayPal
-    document.getElementById('upgrade-btn')?.addEventListener('click', () => {
-      const contractorId = window.contractorId;
-      // This would link to PayPal subscription - to be configured
-      const paypalLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YOUR_BUTTON_ID&custom=${contractorId}`;
-      window.open(paypalLink, '_blank');
+    // PayPal config - using client ID directly
+    const PAYPAL_CLIENT_ID = 'AZoLL22xCqUIuxF_fBKFvDstSpMU3k7JNRTlpJUbOQZMuem7JKrqJj9nVxw4lmkDtIpM5KefKIxPs5Wv';
+    const PAYPAL_SECRET = 'EO-ZKyDJ2Jmny6xW_Lbw8dtmkmq0dRCJI5C2HKHf1w-WvljKeyPVH9uocj-4VrRBaZAiOk9Cv07LU_Da';
+    const PAYPAL_API_BASE = 'https://api-m.paypal.com';
+    let paypalAccessToken = null;
+
+    
+    // Get PayPal Access Token
+    async function getPayPalAccessToken() {
+      if (paypalAccessToken) return paypalAccessToken;
+      const auth = btoa(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`);
+      const res = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
+        method: 'POST',
+        headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=client_credentials'
+      });
+      const data = await res.json();
+      paypalAccessToken = data.access_token;
+      return paypalAccessToken;
+    }
+
+    // Create PayPal Subscription
+    async function createPayPalSubscription(firstName, lastName, email, contractorId) {
+      const token = await getPayPalAccessToken();
+      const subscriptionPayload = {
+        plan: {
+          billing_cycles: [{ frequency: { interval_unit: 'MONTH', interval_count: 1 }, tenure_type: 'REGULAR',
+            pricing_schemes: [{ fixed_price: { value: '99', currency_code: 'CAD' } }] }],
+          payment_preferences: { auto_bill_outstanding: true, setup_fee: { value: '0', currency_code: 'CAD' },
+            setup_fee_failure_action: 'CONTINUE', payment_failure_threshold: 3 },
+          description: 'CanadaRebates Verified Contractor Listing - $99/month'
+        },
+        subscriber: { name: { given_name: firstName, surname: lastName }, email_address: email },
+        application_context: {
+          brand_name: 'CanadaRebates', shipping_preference: 'NO_SHIPPING', user_action: 'SUBSCRIBE_NOW',
+          return_url: `${window.location.origin}/verify?token=${window.contractorToken}&success=true`,
+          cancel_url: `${window.location.origin}/verify?token=${window.contractorToken}&cancelled=true`
+        },
+        custom_id: contractorId
+      };
+      const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/subscriptions`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json',
+          'PayPal-Request-Id': `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` },
+        body: JSON.stringify(subscriptionPayload)
+      });
+      const data = await res.json();
+      if (!res.ok) { console.error('PayPal API error:', data); throw new Error(data.message || 'Failed to create subscription'); }
+      return data;
+    }
+
+    // Upgrade button - creates PayPal subscription
+    document.getElementById('upgrade-btn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('upgrade-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Connecting to PayPal...';
+      try {
+        const subscription = await createPayPalSubscription(
+          window.contractorData?.first_name || 'Customer', window.contractorData?.last_name || '',
+          window.contractorData?.email || '', window.contractorId);
+        const approvalUrl = subscription.links.find(l => l.rel === 'approve')?.href;
+        if (approvalUrl) window.open(approvalUrl, '_blank');
+        btn.innerHTML = '✓ Redirected to PayPal';
+        btn.classList.remove('cta-btn');
+        btn.classList.add('bg-green-600');
+        document.getElementById('payment-status')?.classList.remove('hidden');
+        document.getElementById('payment-status').innerHTML = `<p class="text-mint/70 text-sm">Complete payment in the PayPal window.</p><p class="text-mint/50 text-xs mt-2">After payment, your listing will be verified.</p>`;
+      } catch (err) {
+        console.error('PayPal error:', err);
+        btn.disabled = false;
+        btn.innerHTML = '⚠️ Error - Click to Retry';
+        alert('Failed to connect to PayPal: ' + err.message);
+      }
     });
   </script>
 </body>

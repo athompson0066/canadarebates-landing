@@ -39,7 +39,8 @@
     .step-active { background: #c9a227; color: #0a0f0a; }
     .step-done { background: #6ee7a0; color: #0a0f0a; }
     .step-inactive { background: rgba(110, 231, 160, 0.2); color: rgba(110, 231, 160, 0.5); }
-    #paypal-button-container { min-height: 50px; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #c9a227; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="min-h-screen text-mint overflow-x-hidden">
@@ -85,6 +86,8 @@
         <div id="step1-indicator" class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm step-active">1</div>
         <div class="w-16 h-0.5 bg-mint/20"></div>
         <div id="step2-indicator" class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm step-inactive">2</div>
+        <div class="w-16 h-0.5 bg-mint/20"></div>
+        <div id="step3-indicator" class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm step-inactive">3</div>
       </div>
       <h1 id="form-title" class="text-3xl md:text-4xl font-bold text-white text-center mb-2">Claim Your Free Listing</h1>
       <p id="form-subtitle" class="text-mint/60 text-center mb-8">Fill out your details to get started — takes less than 2 minutes</p>
@@ -227,9 +230,9 @@
     <section id="payment-section" class="px-6 pb-16 max-w-2xl mx-auto hidden">
       <div class="glass-card rounded-3xl p-8 gold-glow border-2 border-gold/30">
         <div class="text-center mb-6">
-          <div class="text-4xl mb-4">🍁</div>
-          <h2 class="text-2xl font-bold text-white mb-2">Almost Done!</h2>
-          <p class="text-mint/70">Complete your payment to activate your verified listing</p>
+          <div class="text-4xl mb-4">🔒</div>
+          <h2 class="text-2xl font-bold text-white mb-2">Complete Your Payment</h2>
+          <p class="text-mint/70">Secure payment to activate your verified listing</p>
         </div>
 
         <!-- Order Summary -->
@@ -242,6 +245,12 @@
             <span class="text-mint/50">Contractor ID</span>
             <span id="contractor-id-display" class="text-mint/50 font-mono"></span>
           </div>
+        </div>
+
+        <!-- Payment Status -->
+        <div id="payment-status" class="text-center mb-4">
+          <div class="spinner mx-auto mb-3"></div>
+          <p class="text-mint/70">Connecting to PayPal...</p>
         </div>
 
         <!-- PayPal Container -->
@@ -302,15 +311,17 @@
     const SUPABASE_URL = 'https://irlxxeoocqktiuulfuqb.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlybHh4ZW9vY3FrdGl1dWxmdXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5MDU2MTgsImV4cCI6MjA3NDQ4MTYxOH0.1rjQgX34Kj8R_ibQ6LsmXl6J3WI8d5kEXrk3SbB6iyg';
     
-    // PayPal config
+    // PayPal config - using client ID directly
     const PAYPAL_CLIENT_ID = 'AZoLL22xCqUIuxF_fBKFvDstSpMU3k7JNRTlpJUbOQZMuem7JKrqJj9nVxw4lmkDtIpM5KefKIxPs5Wv';
-    
+    const PAYPAL_SECRET = 'EO-ZKyDJ2Jmny6xW_Lbw8dtmkmq0dRCJI5C2HKHf1w-WvljKeyPVH9uocj-4VrRBaZAiOk9Cv07LU_Da';
+    const PAYPAL_API_BASE = 'https://api-m.paypal.com';
+
     // Initialize Supabase
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // State
     let contractorRecordId = null;
-    let paypalSubscription = null;
+    let paypalAccessToken = null;
 
     // Generate random token
     function generateToken(length = 48) {
@@ -320,6 +331,91 @@
         token += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       return token;
+    }
+
+    // Get PayPal Access Token
+    async function getPayPalAccessToken() {
+      if (paypalAccessToken) return paypalAccessToken;
+      
+      const auth = btoa(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`);
+      
+      const res = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'grant_type=client_credentials'
+      });
+      
+      const data = await res.json();
+      paypalAccessToken = data.access_token;
+      return paypalAccessToken;
+    }
+
+    // Create PayPal Subscription
+    async function createPayPalSubscription(orderData) {
+      const token = await getPayPalAccessToken();
+      
+      const subscriptionPayload = {
+        plan: {
+          billing_cycles: [
+            {
+              frequency: { interval_unit: 'MONTH', interval_count: 1 },
+              tenure_type: 'REGULAR',
+              pricing_schemes: [
+                {
+                  fixed_price: {
+                    value: '99',
+                    currency_code: 'CAD'
+                  }
+                }
+              ]
+            }
+          ],
+          payment_preferences: {
+            auto_bill_outstanding: true,
+            setup_fee: { value: '0', currency_code: 'CAD' },
+            setup_fee_failure_action: 'CONTINUE',
+            payment_failure_threshold: 3
+          },
+          description: 'CanadaRebates Verified Contractor Listing - $99/month'
+        },
+        subscriber: {
+          name: {
+            given_name: orderData.first_name,
+            surname: orderData.last_name
+          },
+          email_address: orderData.email
+        },
+        application_context: {
+          brand_name: 'CanadaRebates',
+          shipping_preference: 'NO_SHIPPING',
+          user_action: 'SUBSCRIBE_NOW',
+          return_url: `${window.location.origin}/verify-listing?success=true&contractor=${contractorRecordId}`,
+          cancel_url: `${window.location.origin}/verify-listing?cancelled=true`
+        },
+        custom_id: contractorRecordId // Pass contractor ID for webhook verification
+      };
+
+      const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/subscriptions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'PayPal-Request-Id': `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        },
+        body: JSON.stringify(subscriptionPayload)
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        console.error('PayPal API error:', data);
+        throw new Error(data.message || 'Failed to create subscription');
+      }
+      
+      return data;
     }
 
     // Form submission
@@ -372,21 +468,7 @@
         contractorRecordId = data.id;
 
         // Show payment section
-        document.getElementById('form-section').classList.add('hidden');
-        document.getElementById('payment-section').classList.remove('hidden');
-        document.getElementById('contractor-id-display').textContent = data.id;
-        document.getElementById('form-title').textContent = 'Complete Payment';
-        document.getElementById('form-subtitle').textContent = 'Your listing is saved — complete payment to activate';
-
-        // Update step indicators
-        document.getElementById('step1-indicator').classList.remove('step-active');
-        document.getElementById('step1-indicator').classList.add('step-done');
-        document.getElementById('step1-indicator').innerHTML = '✓';
-        document.getElementById('step2-indicator').classList.remove('step-inactive');
-        document.getElementById('step2-indicator').classList.add('step-active');
-
-        // Initialize PayPal
-        initPayPal();
+        showPaymentSection();
 
       } catch (err) {
         console.error('Error:', err);
@@ -396,6 +478,64 @@
       }
     });
 
+    // Show payment section
+    async function showPaymentSection() {
+      document.getElementById('form-section').classList.add('hidden');
+      document.getElementById('payment-section').classList.remove('hidden');
+      document.getElementById('contractor-id-display').textContent = contractorRecordId;
+      document.getElementById('form-title').textContent = 'Complete Payment';
+      document.getElementById('form-subtitle').textContent = 'Your listing is saved — complete payment to activate';
+
+      // Update step indicators
+      setStepDone(1);
+      setStepActive(2);
+
+      // Create PayPal subscription
+      try {
+        const formData = {
+          first_name: document.getElementById('first_name').value.trim(),
+          last_name: document.getElementById('last_name').value.trim(),
+          email: document.getElementById('email').value.trim().toLowerCase()
+        };
+
+        const subscription = await createPayPalSubscription(formData);
+        
+        // Store subscription ID
+        window.paypalSubscriptionId = subscription.id;
+
+        // Update status
+        document.getElementById('payment-status').innerHTML = `
+          <p class="text-mint/70 mb-4">Click the button below to complete your payment</p>
+          <a href="${subscription.links.find(l => l.rel === 'approve').href}" 
+             target="_blank"
+             class="cta-btn inline-block px-8 py-4 rounded-xl font-bold text-white text-lg">
+            Pay $99/month with PayPal →
+          </a>
+        `;
+
+      } catch (err) {
+        console.error('PayPal error:', err);
+        document.getElementById('payment-status').innerHTML = `
+          <p class="text-red-400 text-center text-sm mb-4">Error connecting to PayPal: ${err.message}</p>
+          <button onclick="initiatePayPalPayment()" class="cta-btn w-full py-4 rounded-xl font-bold text-white">
+            Try Again
+          </button>
+        `;
+      }
+    }
+
+    // Step indicator helpers
+    function setStepDone(num) {
+      document.getElementById(`step${num}-indicator`).classList.remove('step-active', 'step-inactive');
+      document.getElementById(`step${num}-indicator`).classList.add('step-done');
+      document.getElementById(`step${num}-indicator`).innerHTML = '✓';
+    }
+
+    function setStepActive(num) {
+      document.getElementById(`step${num}-indicator`).classList.remove('step-inactive');
+      document.getElementById(`step${num}-indicator`).classList.add('step-active');
+    }
+
     // Go back to form
     function goBack() {
       document.getElementById('payment-section').classList.add('hidden');
@@ -403,92 +543,95 @@
       document.getElementById('form-title').textContent = 'Claim Your Free Listing';
       document.getElementById('form-subtitle').textContent = 'Fill out your details to get started — takes less than 2 minutes';
       
-      document.getElementById('step1-indicator').classList.add('step-active');
-      document.getElementById('step1-indicator').classList.remove('step-done');
+      setStepActive(1);
+      setStepDone(1);
+      resetStep(2);
+      resetStep(3);
+      
       document.getElementById('step1-indicator').innerHTML = '1';
-      document.getElementById('step2-indicator').classList.add('step-inactive');
-      document.getElementById('step2-indicator').classList.remove('step-active');
     }
 
-    // Load PayPal SDK
-    function loadPayPalScript() {
-      return new Promise((resolve, reject) => {
-        if (window.paypal) {
-          resolve();
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=CAD&intent=subscription`;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
+    function resetStep(num) {
+      document.getElementById(`step${num}-indicator`).classList.remove('step-active', 'step-done');
+      document.getElementById(`step${num}-indicator`).classList.add('step-inactive');
+      document.getElementById(`step${num}-indicator`).innerHTML = num;
     }
 
-    // Initialize PayPal buttons
-    async function initPayPal() {
-      try {
-        await loadPayPalScript();
-
-        window.paypal.Buttons({
-          style: {
-            layout: 'vertical',
-            color: 'gold',
-            shape: 'rect',
-            label: 'subscribe'
-          },
-          createSubscription: function(data, actions) {
-            return actions.subscription.create({
-              plan_id: 'P-5DW52910DW079525GSNQXXHY', // Replace with your PayPal plan ID
-              application_context: {
-                brand_name: 'CanadaRebates',
-                shipping_preference: 'NO_SHIPPING'
-              },
-              subscriber: {
-                name: {
-                  given_name: document.getElementById('first_name').value,
-                  surname: document.getElementById('last_name').value
-                },
-                email_address: document.getElementById('email').value
-              }
-            });
-          },
-          onApprove: async function(data, actions) {
-            // Subscription approved
-            paypalSubscription = data.subscriptionID;
-            
-            // Update record with PayPal subscription ID
-            await supabase
-              .from('contractors')
-              .update({ 
-                verified: true, 
-                verified_at: new Date().toISOString(),
-                paypal_subscription_id: data.subscriptionID
-              })
-              .eq('id', contractorRecordId);
-
-            // Show success
-            document.getElementById('payment-section').classList.add('hidden');
-            document.getElementById('success-section').classList.remove('hidden');
-            document.getElementById('form-title').textContent = 'Success!';
-            document.getElementById('form-subtitle').textContent = '';
-
-            document.getElementById('step2-indicator').classList.remove('step-active');
-            document.getElementById('step2-indicator').classList.add('step-done');
-            document.getElementById('step2-indicator').innerHTML = '✓';
-          },
-          onError: function(err) {
-            console.error('PayPal error:', err);
-            alert('Payment failed. Please try again.');
-          }
-        }).render('#paypal-button-container');
-
-      } catch (err) {
-        console.error('PayPal init error:', err);
-        document.getElementById('paypal-button-container').innerHTML = 
-          '<p class="text-red-400 text-center text-sm">Error loading PayPal. Please refresh the page.</p>';
+    // Check for success/cancel URL params
+    function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      
+      if (params.get('success') === 'true' && params.get('contractor')) {
+        const contractorId = params.get('contractor');
+        handlePaymentSuccess(contractorId);
+      } else if (params.get('cancelled') === 'true') {
+        document.getElementById('payment-status').innerHTML = `
+          <p class="text-yellow-400 text-center text-sm mb-4">Payment was cancelled.</p>
+          <button onclick="initiatePayPalPayment()" class="cta-btn w-full py-4 rounded-xl font-bold text-white">
+            Try Again
+          </button>
+        `;
       }
     }
+
+    // Handle successful payment (called from return_url)
+    async function handlePaymentSuccess(contractorId) {
+      // Update record as verified
+      await supabase
+        .from('contractors')
+        .update({ 
+          verified: true, 
+          verified_at: new Date().toISOString()
+        })
+        .eq('id', contractorId);
+
+      // Show success
+      document.getElementById('payment-section').classList.add('hidden');
+      document.getElementById('success-section').classList.remove('hidden');
+      document.getElementById('form-title').textContent = 'Success!';
+      document.getElementById('form-subtitle').textContent = '';
+
+      setStepDone(2);
+      setStepDone(3);
+    }
+
+    // Re-initiate PayPal payment
+    async function initiatePayPalPayment() {
+      const formData = {
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        email: document.getElementById('email').value.trim().toLowerCase()
+      };
+
+      document.getElementById('payment-status').innerHTML = `
+        <div class="spinner mx-auto mb-3"></div>
+        <p class="text-mint/70">Connecting to PayPal...</p>
+      `;
+
+      try {
+        const subscription = await createPayPalSubscription(formData);
+        window.paypalSubscriptionId = subscription.id;
+        
+        document.getElementById('payment-status').innerHTML = `
+          <p class="text-mint/70 mb-4">Click the button below to complete your payment</p>
+          <a href="${subscription.links.find(l => l.rel === 'approve').href}" 
+             target="_blank"
+             class="cta-btn inline-block px-8 py-4 rounded-xl font-bold text-white text-lg">
+            Pay $99/month with PayPal →
+          </a>
+        `;
+      } catch (err) {
+        document.getElementById('payment-status').innerHTML = `
+          <p class="text-red-400 text-center text-sm mb-4">Error: ${err.message}</p>
+          <button onclick="initiatePayPalPayment()" class="cta-btn w-full py-4 rounded-xl font-bold text-white">
+            Try Again
+          </button>
+        `;
+      }
+    }
+
+    // Check URL params on load
+    checkUrlParams();
   </script>
 </body>
 </html>
