@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - CanadaRebates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: { 50: '#e8f5e9', 100: '#c8e6c9', 200: '#a5d6a7', 300: '#81c784', 400: '#66bb6a', 500: '#4caf50', 600: '#43a047', 700: '#388e3c', 800: '#2e7d32', 900: '#1b5e20' },
+            bark: { 50: '#f1f8e9', 100: '#dcedc8', 200: '#c5e1a5', 300: '#aed581', 400: '#9ccc65', 500: '#8bc34a', 600: '#7cb342', 700: '#689f38', 800: '#558b2f', 900: '#33691e' },
+            pine: { DEFAULT: '#0d1f12', elevated: '#122118', card: '#1a2b1f', border: '#243526' },
+            mint: { DEFAULT: '#6ee7a0', muted: '#4dbd7d', dim: '#2d8a52', pale: '#a8f0c8' }
+          },
+          fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: radial-gradient(ellipse at 60% 0%, #0d1f12 0%, #0a0f0a 60%); font-family: 'Manrope', sans-serif; }
+    .glass-card { background: rgba(18, 33, 24, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(110, 231, 160, 0.1); }
+    .green-glow { box-shadow: 0 0 40px rgba(110, 231, 160, 0.12), 0 0 80px rgba(110, 231, 160, 0.06); }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  </style>
+</head>
+<body class="min-h-screen text-mint overflow-x-hidden">
+  <!-- Ambient blobs -->
+  <div class="blob w-[600px] h-[600px] bg-[#1b5e20]/20 -top-40 -right-40 fixed"></div>
+  <div class="blob w-[400px] h-[400px] bg-[#2e7d32]/15 bottom-0 left-0 fixed"></div>
+
+  <div class="relative z-10">
+    <!-- Header with Nav -->
+    <header class="p-4 md:p-6 flex items-center justify-between max-w-6xl mx-auto">
+      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition">
+        <div class="text-2xl">🍁</div>
+        <div>
+          <div class="text-sm font-bold text-mint">CanadaRebates</div>
+          <div class="text-xs text-mint/50">Find rebates in your city</div>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a href="/" class="text-mint/70 hover:text-mint transition">Home</a>
+        <a href="/about" class="text-mint font-semibold">About Us</a>
+        <a href="/verify" class="text-mint/70 hover:text-mint transition">Verify Your Listing</a>
+        <a href="/contact" class="text-mint/70 hover:text-mint transition">Contact Us</a>
+      </nav>
+      <div class="flex items-center gap-2 text-xs text-mint/50">
+        <span class="w-2 h-2 rounded-full bg-[#6ee7a0] pulse-dot"></span>
+        <span>3,500+ verified contractors</span>
+      </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <div class="md:hidden px-4 pb-4">
+      <nav class="flex flex-wrap justify-center gap-4 text-xs">
+        <a href="/" class="text-mint/70 hover:text-mint">Home</a>
+        <a href="/about" class="text-mint font-semibold">About Us</a>
+        <a href="/verify" class="text-mint/70 hover:text-mint">Verify Your Listing</a>
+        <a href="/contact" class="text-mint/70 hover:text-mint">Contact Us</a>
+      </nav>
+    </div>
+
+    <!-- Content -->
+    <main class="px-6 py-12 max-w-4xl mx-auto">
+      <div class="glass-card rounded-3xl p-8 md:p-12 green-glow">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-6">About CanadaRebates</h1>
+        
+        <div class="space-y-6 text-mint/80">
+          <p class="text-lg">
+            CanadaRebates helps homeowners discover and claim government rebates for home improvements — from heat pumps to insulation to windows.
+          </p>
+          
+          <h2 class="text-xl font-semibold text-white mt-8">Our Mission</h2>
+          <p>
+            Billions in Canadian government rebates go unclaimed every year. Most homeowners don't know they qualify, and the process to find rebates is scattered across 13+ different government lists.
+          </p>
+          <p>
+            We consolidate everything into one searchable platform, then connect you with verified contractors who help you claim what's yours.
+          </p>
+          
+          <h2 class="text-xl font-semibold text-white mt-8">How We Work</h2>
+          <ul class="list-disc list-inside space-y-2 pl-2">
+            <li><strong class="text-white">Aggregation:</strong> We merge federal, provincial, and utility rebate programs into one database</li>
+            <li><strong class="text-white">Verification:</strong> Contractors are verified against official government contractor lists</li>
+            <li><strong class="text-white">Matching:</strong> Homeowners get matched with verified contractors in their area</li>
+          </ul>
+          
+          <h2 class="text-xl font-semibold text-white mt-8">For Contractors</h2>
+          <p>
+            If you're a contractor appearing in government rebate programs, you're likely already in our database. Claim your listing to:
+          </p>
+          <ul class="list-disc list-inside space-y-2 pl-2">
+            <li>Add your website and contact info</li>
+            <li>Get featured placement in your city</li>
+            <li>Receive leads from homeowners ready to hire</li>
+          </ul>
+          
+          <div class="mt-10">
+            <a href="/verify" class="inline-block px-6 py-3 bg-gradient-to-r from-[#4caf50] to-[#2e7d32] rounded-xl font-semibold text-white hover:opacity-90 transition">
+              Claim Your Listing →
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-6 text-center text-xs text-mint/30 mt-12">
+      <p>© 2026 CanadaRebates · Helping Canadians claim what's theirs</p>
+    </footer>
+  </div>
+</body>
+</html>
